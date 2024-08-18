@@ -68,14 +68,4 @@ class QuestionFactory: QuestionFactoryProtocol {
         delegate?.didReceiveNextQuestion(question: question)
     }
     
-    /*
-    subscript(index: Int) -> Int {
-        get {
-            // Возвращаем соответствующее значение
-        }
-        set(newValue) {
-            // Устанавливаем подходящее значение
-        }
-    }
-*/
 }

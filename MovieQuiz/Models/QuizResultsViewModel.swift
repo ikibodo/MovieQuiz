@@ -7,7 +7,6 @@
 
 import Foundation
 
-// не получается заприватить - тогда не видит контролер
 struct QuizResultsViewModel {
     let title: String
     let text: String

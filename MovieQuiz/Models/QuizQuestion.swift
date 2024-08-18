@@ -7,7 +7,6 @@
 
 import Foundation
 
-// не получается заприватить - тогда не видит контролер
 struct QuizQuestion {
     let image: String
     let text: String
