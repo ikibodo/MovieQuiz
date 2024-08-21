@@ -12,18 +12,15 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate, 
     var currentQuestionIndex = 0
     var correctAnswers = 0
     
+    var date = Date()
+    
     private let questionsAmount: Int = 10
-    
     private var questionFactory: QuestionFactoryProtocol = QuestionFactory()
-    
     private var currentQuestion: QuizQuestion?
     private var alertModel: AlertModel?
     private var alertPresenter = ResultAlertPresenter()
     
     private var statisticService: StatisticServiceProtocol = StatisticService()
-    
-    var date = Date()
-    
     
     // MARK: - Lifecycle
     
@@ -114,6 +111,7 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate, 
     
     private func showNextQuestionOrResults() {
         imageView.layer.borderWidth = .zero
+        
         if currentQuestionIndex == questionsAmount - 1 {
             statisticService.store(correct: correctAnswers, total: questionsAmount)
             let viewModel = QuizResultsViewModel(
@@ -123,17 +121,16 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate, 
                 "Рекорд: \(statisticService.bestGame.correct)/\(statisticService.bestGame.total) (\(statisticService.bestGame.date.dateTimeString))  \n" +
                 "Средняя точность: \(String(format: "%.2f", statisticService.totalAccuracy))%",
                 buttonText: "Сыграть ещё раз")
+            
             show(quiz: viewModel)
         } else {
             currentQuestionIndex += 1
-            
             questionFactory.requestNextQuestion()
         }
     }
     
     private func show(quiz result: QuizResultsViewModel) {
-     //   statisticService.store(correct: correctAnswers, total: 10)
-                               
+        
         let alertModel = AlertModel(
             title: result.title,
             message: result.text,
@@ -144,7 +141,5 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate, 
         alertPresenter.delegate = self
         
         self.present(alert, animated: true, completion: nil)
-        
     }
-    
 }

@@ -1,7 +1,7 @@
 import Foundation
 
 final class StatisticService  {
-    // private let storage: UserDefaults = .standard на курсе так
+    
     private let storage = UserDefaults.standard
     
     private enum Keys: String {
@@ -51,7 +51,6 @@ extension StatisticService: StatisticServiceProtocol {
             storage.set(newValue.correct, forKey: Keys.correct.rawValue)
             storage.set(newValue.total, forKey: Keys.total.rawValue)
             storage.set(newValue.date, forKey: Keys.bestGameDate.rawValue)
-            
         }
     }
     
@@ -83,6 +82,3 @@ extension StatisticService: StatisticServiceProtocol {
         }
     }
 }
-
- 
-
