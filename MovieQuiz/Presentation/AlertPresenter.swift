@@ -1,10 +1,3 @@
-//
-//  AlertPresenter.swift
-//  MovieQuiz
-//
-//  Created by N L on 16.8.24..
-//
-
 import Foundation
 import UIKit
 
@@ -12,16 +5,17 @@ import UIKit
 protocol AlertPresenterDelegate: AnyObject {
     var currentQuestionIndex: Int { get set }
     var correctAnswers: Int { get set }
-   // var questionFactory: QuestionFactoryProtocol { get set }
 }
 
+protocol AlertPresenterProtocol {
+    func alert(alertModel: AlertModel, questionFactory: QuestionFactoryProtocol) -> UIAlertController
+}
 
-class ResultAlertPresenter: UIAlertController {
+class ResultAlertPresenter: AlertPresenterProtocol {
     
     weak var delegate: AlertPresenterDelegate?
     
-    func alert(alertModel: AlertModel, questionFactory: QuestionFactoryProtocol) -> UIAlertController {
-        
+    func alert(alertModel: AlertModel, questionFactory: QuestionFactoryProtocol) -> UIAlertController  {
         let alert = UIAlertController(
             title: alertModel.title,
             message: alertModel.message,
@@ -30,18 +24,15 @@ class ResultAlertPresenter: UIAlertController {
         let action = UIAlertAction(title: alertModel.buttonText, style: .default) { [weak self] _ in
             guard let self = self else { return }
             
-            delegate?.currentQuestionIndex = 0
-            delegate?.correctAnswers = 0
+            delegate?.currentQuestionIndex = .zero
+            delegate?.correctAnswers = .zero
             
-           // delegate?.
             questionFactory.requestNextQuestion()
-        }
+    }
         
         alert.addAction(action)
         
         return alert
-        
     }
-    
 }
 

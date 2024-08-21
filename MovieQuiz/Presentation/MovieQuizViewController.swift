@@ -1,13 +1,13 @@
 import UIKit
 
-class MovieQuizViewController: UIViewController, QuestionFactoryDelegate, AlertPresenterDelegate {
+final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate, AlertPresenterDelegate {
     
     @IBOutlet private var imageView: UIImageView!
     @IBOutlet private var textLabel: UILabel!
     @IBOutlet private var counterLabel: UILabel!
     
-    @IBOutlet weak var noButton: UIButton!
-    @IBOutlet weak var yesButton: UIButton!
+    @IBOutlet private var noButton: UIButton!
+    @IBOutlet private var yesButton: UIButton!
     
     var currentQuestionIndex = 0
     var correctAnswers = 0
@@ -21,13 +21,15 @@ class MovieQuizViewController: UIViewController, QuestionFactoryDelegate, AlertP
     private var alertPresenter = ResultAlertPresenter()
     
     private var statisticService: StatisticServiceProtocol = StatisticService()
-
+    
+    var date = Date()
+    
     
     // MARK: - Lifecycle
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        //  show(quiz: convert(model: questions[currentQuestionIndex]))
+        
         imageView.contentMode = .scaleAspectFill
         
         let questionFactory = QuestionFactory()
@@ -35,6 +37,9 @@ class MovieQuizViewController: UIViewController, QuestionFactoryDelegate, AlertP
         self.questionFactory = questionFactory
         
         questionFactory.requestNextQuestion()
+        
+        statisticService = StatisticService()
+
     }
     
     // MARK: - QuestionFactoryDelegate
@@ -106,17 +111,17 @@ class MovieQuizViewController: UIViewController, QuestionFactoryDelegate, AlertP
         noButton.isEnabled = isEnable
         yesButton.isEnabled = isEnable
     }
-  
+    
     private func showNextQuestionOrResults() {
-        imageView.layer.borderWidth = 0
+        imageView.layer.borderWidth = .zero
         if currentQuestionIndex == questionsAmount - 1 {
-            let text = correctAnswers == questionsAmount ?
-            "Поздравляем, вы ответили на 10 из 10!" :
-            "Вы ответили на \(correctAnswers) из 10, попробуйте ещё раз!"
-            // let text = "Ваш результат: \(correctAnswers)/10"
+            statisticService.store(correct: correctAnswers, total: questionsAmount)
             let viewModel = QuizResultsViewModel(
                 title: "Этот раунд окончен!",
-                text: text,
+                text: "Ваш результат: \(correctAnswers)/10 \n" +
+                "Количество сыгранных квизов: \(statisticService.gamesCount) \n" + 
+                "Рекорд: \(statisticService.bestGame.correct)/\(statisticService.bestGame.total) (\(statisticService.bestGame.date.dateTimeString))  \n" +
+                "Средняя точность: \(String(format: "%.2f", statisticService.totalAccuracy))%",
                 buttonText: "Сыграть ещё раз")
             show(quiz: viewModel)
         } else {
@@ -127,7 +132,8 @@ class MovieQuizViewController: UIViewController, QuestionFactoryDelegate, AlertP
     }
     
     private func show(quiz result: QuizResultsViewModel) {
-        
+     //   statisticService.store(correct: correctAnswers, total: 10)
+                               
         let alertModel = AlertModel(
             title: result.title,
             message: result.text,
@@ -138,7 +144,7 @@ class MovieQuizViewController: UIViewController, QuestionFactoryDelegate, AlertP
         alertPresenter.delegate = self
         
         self.present(alert, animated: true, completion: nil)
-
+        
     }
-
+    
 }
