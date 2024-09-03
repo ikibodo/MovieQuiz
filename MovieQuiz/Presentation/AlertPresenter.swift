@@ -11,7 +11,7 @@ protocol AlertPresenterProtocol {
     func alert(alertModel: AlertModel, questionFactory: QuestionFactoryProtocol) -> UIAlertController
 }
 
-final class ResultAlertPresenter: AlertPresenterProtocol {
+class ResultAlertPresenter: AlertPresenterProtocol {
     
     weak var delegate: AlertPresenterDelegate?
     
@@ -35,4 +35,3 @@ final class ResultAlertPresenter: AlertPresenterProtocol {
         return alert
     }
 }
-

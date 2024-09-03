@@ -9,6 +9,8 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate, 
     @IBOutlet private weak var noButton: UIButton!
     @IBOutlet private weak var yesButton: UIButton!
     
+    @IBOutlet private weak var activityIndicator: UIActivityIndicatorView!
+    
     var currentQuestionIndex = 0
     var correctAnswers = 0
     
@@ -75,6 +77,32 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate, 
     
     // MARK: - Private functions
     
+    private func showLoadingIndicator() {
+        activityIndicator.isHidden = false
+        activityIndicator.startAnimating()
+    }
+  
+    private func showNetworkError(message: String) {
+    //hideLoadingIndicator()
+        
+        let model = AlertModel(title: "Ошибка",
+                               message: message,
+                               buttonText: "Попробовать еще раз") { [weak self] in
+            guard let self = self else { return }
+            
+           // self.currentQuestionIndex = 0
+            //self.correctAnswers = 0
+            
+           // self.questionFactory?.requestNextQuestion()
+        }
+        
+        let alert = alertPresenter.alert(alertModel: model, questionFactory: questionFactory)
+        alertPresenter.delegate = self
+        self.present(alert, animated: true, completion: nil)
+        
+       // alertPresenter.alert(alertModel: alertModel)
+    }
+    
     private func convert(model: QuizQuestion) -> QuizStepViewModel {
         let questionStep = QuizStepViewModel(
             image: UIImage(named: model.image) ?? UIImage(),
@@ -130,16 +158,14 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate, 
     }
     
     private func show(quiz result: QuizResultsViewModel) {
-        
-        let alertModel = AlertModel(
-            title: result.title,
-            message: result.text,
-            buttonText: result.buttonText)
-        
-        let alert = alertPresenter.alert(alertModel: alertModel, questionFactory: questionFactory)
-        
-        alertPresenter.delegate = self
-        
-        self.present(alert, animated: true, completion: nil)
-    }
+           
+           let alertModel = AlertModel(
+               title: result.title,
+               message: result.text,
+               buttonText: result.buttonText)
+           
+           let alert = alertPresenter.alert(alertModel: alertModel, questionFactory: questionFactory)
+           alertPresenter.delegate = self
+           self.present(alert, animated: true, completion: nil)
+       }
 }
