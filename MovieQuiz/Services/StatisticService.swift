@@ -19,17 +19,17 @@ extension StatisticService: StatisticServiceProtocol {
     func store(correct count: Int, total amount: Int) {
         
         let result = GameResult(correct: count, total: amount, date: Date())
-
+        
         gamesCount += 1
         totalCorrectAnswers += count
         totalQuestions += amount
-
+        
         if result.isBetterThan(bestGame) {
-          bestGame = result
+            bestGame = result
         }
         
     }
-   
+    
     var gamesCount: Int {
         get {
             storage.integer(forKey: Keys.gamesCount.rawValue)
@@ -44,7 +44,7 @@ extension StatisticService: StatisticServiceProtocol {
             let correct = storage.integer(forKey: Keys.correct.rawValue)
             let total = storage.integer(forKey:  Keys.total.rawValue)
             let date = storage.object(forKey: Keys.bestGameDate.rawValue) as? Date ?? Date()
-    
+            
             return GameResult(correct: correct, total: total, date: date)
         }
         set {
@@ -72,7 +72,7 @@ extension StatisticService: StatisticServiceProtocol {
             storage.set(newValue, forKey: Keys.totalCorrectAnswers.rawValue)
         }
     }
-
+    
     var totalQuestions: Int {
         get {
             storage.integer(forKey: Keys.totalQuestions.rawValue)

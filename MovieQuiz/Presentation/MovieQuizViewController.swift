@@ -17,7 +17,7 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate, 
     var date = Date()
     
     private let questionsAmount: Int = 10
-    private var questionFactory: QuestionFactoryProtocol = QuestionFactory()
+    private var questionFactory: QuestionFactoryProtocol?
     private var currentQuestion: QuizQuestion?
     private var alertModel: AlertModel?
     private var alertPresenter = ResultAlertPresenter()
@@ -30,15 +30,14 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate, 
         super.viewDidLoad()
         
         imageView.contentMode = .scaleAspectFill
+        imageView.layer.cornerRadius = 20
         
-        let questionFactory = QuestionFactory()
-        questionFactory.setup(delegate: self)
-        self.questionFactory = questionFactory
-        
-        questionFactory.requestNextQuestion()
-        
+        questionFactory = QuestionFactory(moviesLoader: MoviesLoader(), delegate: self)
         statisticService = StatisticService()
-
+        
+        showLoadingIndicator()
+        questionFactory?.loadData()
+        
     }
     
     // MARK: - QuestionFactoryDelegate
@@ -47,13 +46,22 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate, 
         guard let question = question else {
             return
         }
-        
+
         currentQuestion = question
         let viewModel = convert(model: question)
         
         DispatchQueue.main.async { [weak self] in
             self?.show(quiz: viewModel)
         }
+    }
+    
+    func didLoadDataFromServer() {
+        activityIndicator.isHidden = true
+        questionFactory?.requestNextQuestion()
+    }
+    
+    func didFailToLoadData(with error: Error) {
+        showNetworkError(message: error.localizedDescription)
     }
     
     // MARK: - Actions
@@ -81,31 +89,36 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate, 
         activityIndicator.isHidden = false
         activityIndicator.startAnimating()
     }
-  
+    
+    private func hideLoadingIndicator() {
+        activityIndicator.isHidden = true
+        activityIndicator.stopAnimating()
+        activityIndicator.hidesWhenStopped = true
+    }
+    
     private func showNetworkError(message: String) {
-    //hideLoadingIndicator()
+        hideLoadingIndicator()
         
         let model = AlertModel(title: "Ошибка",
                                message: message,
                                buttonText: "Попробовать еще раз") { [weak self] in
             guard let self = self else { return }
             
-           // self.currentQuestionIndex = 0
-            //self.correctAnswers = 0
+            self.currentQuestionIndex = .zero
+            self.correctAnswers = .zero
             
-           // self.questionFactory?.requestNextQuestion()
+            self.questionFactory?.requestNextQuestion()
         }
         
-        let alert = alertPresenter.alert(alertModel: model, questionFactory: questionFactory)
+        let alert = alertPresenter.alert(alertModel: model)
         alertPresenter.delegate = self
         self.present(alert, animated: true, completion: nil)
         
-       // alertPresenter.alert(alertModel: alertModel)
     }
     
     private func convert(model: QuizQuestion) -> QuizStepViewModel {
         let questionStep = QuizStepViewModel(
-            image: UIImage(named: model.image) ?? UIImage(),
+            image: UIImage(data: model.image) ?? UIImage(),
             question: model.text,
             questionNumber: "\(currentQuestionIndex + 1)/\(questionsAmount)")
         return questionStep
@@ -150,22 +163,27 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate, 
                 "Средняя точность: \(String(format: "%.2f", statisticService.totalAccuracy))%",
                 buttonText: "Сыграть ещё раз")
             
+            self.currentQuestionIndex = .zero
+            self.correctAnswers = .zero
+            
+            self.questionFactory?.requestNextQuestion()
+            
             show(quiz: viewModel)
         } else {
             currentQuestionIndex += 1
-            questionFactory.requestNextQuestion()
+            questionFactory?.requestNextQuestion()
         }
     }
     
     private func show(quiz result: QuizResultsViewModel) {
-           
-           let alertModel = AlertModel(
-               title: result.title,
-               message: result.text,
-               buttonText: result.buttonText)
-           
-           let alert = alertPresenter.alert(alertModel: alertModel, questionFactory: questionFactory)
-           alertPresenter.delegate = self
-           self.present(alert, animated: true, completion: nil)
-       }
+        
+        let alertModel = AlertModel(
+            title: result.title,
+            message: result.text,
+            buttonText: result.buttonText)
+        
+        let alert = alertPresenter.alert(alertModel: alertModel)
+        alertPresenter.delegate = self
+        self.present(alert, animated: true, completion: nil)
+    }
 }
