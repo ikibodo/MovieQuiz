@@ -49,7 +49,7 @@
                                             </userDefinedRuntimeAttribute>
                                         </userDefinedRuntimeAttributes>
                                     </imageView>
-                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Рейтинг этого фильма больше, чем 6 ?" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="3" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="SNG-GW-gjv" userLabel="Question Label">
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Рейтинг этого фильма больше, чем 7?" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="3" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="SNG-GW-gjv" userLabel="Question Label">
                                         <rect key="frame" x="0.0" y="624.5" width="374" height="99.5"/>
                                         <fontDescription key="fontDescription" name="YSDisplay-Bold" family="YS Display" pointSize="23"/>
                                         <color key="textColor" name="YP White"/>
@@ -99,17 +99,23 @@
                                     </stackView>
                                 </subviews>
                             </stackView>
+                            <activityIndicatorView hidden="YES" opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" hidesWhenStopped="YES" style="medium" translatesAutoresizingMaskIntoConstraints="NO" id="8Ob-1j-c6Z">
+                                <rect key="frame" x="197" y="438" width="20" height="20"/>
+                            </activityIndicatorView>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="ZgZ-du-w8y"/>
                         <color key="backgroundColor" name="YP Black"/>
                         <constraints>
+                            <constraint firstItem="8Ob-1j-c6Z" firstAttribute="centerX" secondItem="0pt-Tp-Tia" secondAttribute="centerX" id="BQO-ko-wog"/>
                             <constraint firstItem="eOK-N6-ZJY" firstAttribute="top" secondItem="ZgZ-du-w8y" secondAttribute="top" constant="10" id="j1g-Bz-OR1"/>
+                            <constraint firstItem="8Ob-1j-c6Z" firstAttribute="centerY" secondItem="0pt-Tp-Tia" secondAttribute="centerY" id="rfm-B2-BJU"/>
                             <constraint firstItem="ZgZ-du-w8y" firstAttribute="trailing" secondItem="eOK-N6-ZJY" secondAttribute="trailing" constant="20" id="sHK-QV-sRG"/>
                             <constraint firstItem="eOK-N6-ZJY" firstAttribute="leading" secondItem="ZgZ-du-w8y" secondAttribute="leading" constant="20" id="vuL-5J-OyA"/>
                             <constraint firstItem="eOK-N6-ZJY" firstAttribute="bottom" secondItem="ZgZ-du-w8y" secondAttribute="bottom" id="yfE-8G-P46"/>
                         </constraints>
                     </view>
                     <connections>
+                        <outlet property="activityIndicator" destination="8Ob-1j-c6Z" id="3fB-2d-m5g"/>
                         <outlet property="counterLabel" destination="G9C-4H-tXr" id="SDH-nQ-AG7"/>
                         <outlet property="imageView" destination="nRw-Va-18K" id="R4d-3S-KzZ"/>
                         <outlet property="noButton" destination="InT-7k-nak" id="vjR-34-iva"/>
@@ -119,7 +125,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-55.725190839694655" y="54.929577464788736"/>
+            <point key="canvasLocation" x="-56.521739130434788" y="54.910714285714285"/>
         </scene>
     </scenes>
     <resources>
