@@ -3,7 +3,7 @@ import UIKit
 
 final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
     
-    var currentQuestionIndex = 0
+   // var currentQuestionIndex = 0
     var correctAnswers = 0
     
     @IBOutlet private weak var imageView: UIImageView!
@@ -15,7 +15,9 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
     
     @IBOutlet private weak var activityIndicator: UIActivityIndicatorView!
     
-    private let questionsAmount: Int = 10
+    private let presenter = MovieQuizPresenter()
+    
+ //   private let questionsAmount: Int = 10
     private var questionFactory: QuestionFactoryProtocol?
     private var currentQuestion: QuizQuestion?
     private var alertModel: AlertModel?
@@ -50,7 +52,7 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
         }
         
         currentQuestion = question
-        let viewModel = convert(model: question)
+        let viewModel = presenter.convert(model: question)
         
         DispatchQueue.main.async { [weak self] in
             self?.show(quiz: viewModel)
@@ -103,7 +105,7 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
             message: message,
             buttonText: "Попробовать ещё раз") { [weak self] in
                 guard let self = self else {return}
-            self.currentQuestionIndex = .zero
+            self.presenter.resetQuestionIndex()
             self.correctAnswers = .zero
             self.questionFactory?.loadData()
             self.questionFactory?.requestNextQuestion()
@@ -111,14 +113,14 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
         guard let alert = alertPresenter?.showAlert(alertModel: alertModel) else { return }
         self.present(alert, animated: true, completion: nil)
     }
-    
+    /* перенесен в презентер - надо удалить тут
     private func convert(model: QuizQuestion) -> QuizStepViewModel {
         let questionStep = QuizStepViewModel(
             image: UIImage(data: model.image) ?? UIImage(),
             question: model.text,
             questionNumber: "\(currentQuestionIndex + 1)/\(questionsAmount)")
         return questionStep
-    }
+    }*/
     
     private func show(quiz step: QuizStepViewModel) {
         imageView.image = step.image
@@ -149,8 +151,9 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
     private func showNextQuestionOrResults() {
         imageView.layer.borderWidth = .zero
         
-        if currentQuestionIndex == questionsAmount - 1 {
-            statisticService.store(correct: correctAnswers, total: questionsAmount)
+     // было   if currentQuestionIndex == questionsAmount - 1 
+            if presenter.isLastQuestion(){
+            statisticService.store(correct: correctAnswers, total: presenter.questionsAmount)
             let viewModel = QuizResultsViewModel(
                 title: "Этот раунд окончен!",
                 text: "Ваш результат: \(correctAnswers)/10 \n" +
@@ -159,13 +162,15 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
                 "Средняя точность: \(String(format: "%.2f", statisticService.totalAccuracy))%",
                 buttonText: "Сыграть ещё раз")
             
-            currentQuestionIndex = .zero
+            // currentQuestionIndex = .zero
+            self.presenter.resetQuestionIndex()
             self.correctAnswers = .zero
             
             show(quiz: viewModel)
             
         } else {
-            currentQuestionIndex += 1
+            //currentQuestionIndex += 1
+            presenter.switchToNextQuestion()
             questionFactory?.requestNextQuestion()
         }
     }
