@@ -1,7 +1,10 @@
 import Foundation
 import UIKit
 
-final class MovieQuizViewController: UIViewController {
+import Foundation
+import UIKit
+
+final class MovieQuizViewController: UIViewController, MovieQuizViewControllerProtocol {
 
     @IBOutlet private weak var imageView: UIImageView!
     @IBOutlet private weak var textLabel: UILabel!
@@ -45,11 +48,9 @@ final class MovieQuizViewController: UIViewController {
         activityIndicator.stopAnimating()
     }
     
-    func show(quiz step: QuizStepViewModel) {
-        imageView.layer.borderColor = UIColor.clear.cgColor // кажется это убирает рамку - проверь!
-        imageView.image = step.image
-        textLabel.text = step.question
-        counterLabel.text = step.questionNumber
+    func changeStateButton(isEnable: Bool) {
+        noButton.isEnabled = isEnable
+        yesButton.isEnabled = isEnable
     }
     
     func highlightImageBorder(isCorrectAnswer: Bool) {
@@ -57,10 +58,12 @@ final class MovieQuizViewController: UIViewController {
         imageView.layer.borderWidth = 8
         imageView.layer.borderColor = isCorrectAnswer ? UIColor.ypGreen.cgColor : UIColor.ypRed.cgColor
     }
-
-    func changeStateButton(isEnable: Bool) {
-        noButton.isEnabled = isEnable
-        yesButton.isEnabled = isEnable
+    
+    func show(quiz step: QuizStepViewModel) {
+        imageView.layer.borderColor = UIColor.clear.cgColor // кажется это убирает рамку - проверь!
+        imageView.image = step.image
+        textLabel.text = step.question
+        counterLabel.text = step.questionNumber
     }
 
     func show(quiz result: QuizResultsViewModel) {
