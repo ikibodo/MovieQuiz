@@ -5,7 +5,7 @@ import Foundation
 import UIKit
 
 final class MovieQuizViewController: UIViewController, MovieQuizViewControllerProtocol {
-
+    
     @IBOutlet private weak var imageView: UIImageView!
     @IBOutlet private weak var textLabel: UILabel!
     @IBOutlet private weak var counterLabel: UILabel!
@@ -18,7 +18,7 @@ final class MovieQuizViewController: UIViewController, MovieQuizViewControllerPr
     private var presenter: MovieQuizPresenter!
     private var alertModel: AlertModel?
     private var alertPresenter: AlertPresenterProtocol?
-
+    
     // MARK: - Lifecycle
     
     override var preferredStatusBarStyle: UIStatusBarStyle {
@@ -30,13 +30,13 @@ final class MovieQuizViewController: UIViewController, MovieQuizViewControllerPr
         
         imageView.contentMode = .scaleAspectFill
         imageView.layer.cornerRadius = 20
-     
+        
         presenter = MovieQuizPresenter(viewController: self)
-       
+        
         alertPresenter = AlertPresenter()
         showLoadingIndicator()
     }
-
+    
     // MARK: - Functions
     
     func showLoadingIndicator() {
@@ -60,12 +60,12 @@ final class MovieQuizViewController: UIViewController, MovieQuizViewControllerPr
     }
     
     func show(quiz step: QuizStepViewModel) {
-        imageView.layer.borderColor = UIColor.clear.cgColor // кажется это убирает рамку - проверь!
+        imageView.layer.borderColor = UIColor.clear.cgColor
         imageView.image = step.image
         textLabel.text = step.question
         counterLabel.text = step.questionNumber
     }
-
+    
     func show(quiz result: QuizResultsViewModel) {
         let message = presenter.makeResultsMessage()
         
@@ -88,9 +88,9 @@ final class MovieQuizViewController: UIViewController, MovieQuizViewControllerPr
             message: message,
             buttonText: "Попробовать ещё раз") { [weak self] in
                 guard let self = self else {return}
-            presenter.loadDataFromQuestionFactory()
-            self.presenter.restartGame()
-        }
+                presenter.loadDataFromQuestionFactory()
+                self.presenter.restartGame()
+            }
         guard let alert = alertPresenter?.showAlert(alertModel: alertModel) else { return }
         self.present(alert, animated: true, completion: nil)
     }
@@ -98,10 +98,11 @@ final class MovieQuizViewController: UIViewController, MovieQuizViewControllerPr
     // MARK: - Actions
     
     @IBAction private func yesButtonClicked(_ sender: UIButton) {
-        presenter.yesButtonClicked()
-    }
+        // presenter.yesButtonClicked()
+        presenter.buttonClicked(isCorrectAnswer: true)   }
     
     @IBAction private func noButtonClicked(_ sender: UIButton) {
-        presenter.noButtonClicked()
+        //presenter.noButtonClicked()
+        presenter.buttonClicked(isCorrectAnswer: false)
     }
 }
